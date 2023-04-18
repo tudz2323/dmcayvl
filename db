@@ -48,7 +48,7 @@ local tag
 local userinfo = {}
 
 _G.Key = ""
-_G.Discord = "https://discord.gg/RsBHAqQtHe"
+_G.Discord = ""
 
 if game.CoreGui:FindFirstChild(_G.Key .."," .. _G.Discord) then
    game.CoreGui:FindFirstChild(_G.Key .."," .. _G.Discord):Destroy()
@@ -4238,7 +4238,7 @@ Setting:Line()
 
 Setting:Button("Copy Discord Link",function()
  
- setclipboard("https://discord.gg/pMXwTQz6Yk")
+ setclipboard("")
  end)
 
 Setting:Seperator(" Setting ")
@@ -4263,12 +4263,12 @@ Setting:Toggle("Anti AFK",true,function(value)
  end)
 
 if not game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").KeyboardEnabled == false then
-_G.DistanceMob = 20
+_G.DistanceMob = 15
 Setting:Slider("Farm Distance",1,100,20,function(value)
  _G.DistanceMob = value
  end)
 else
- _G.DistanceMob = 20
+ _G.DistanceMob = 15
 Setting:Slider1("Farm Distance",1,100,20,function(value)
  _G.DistanceMob = value
  end)
@@ -9295,7 +9295,8 @@ Teleport:Seperator(" WORLD ")
   "Ice Cream Island",
   "Peanut Island",
   "Cake Island",
-  "Noname Island(New)"
+  "Chocolate Island",
+  "Candy Island(New)"
  },function(value)
   _G.SelectIsland = value
   end)
@@ -9395,15 +9396,17 @@ Teleport:Seperator(" WORLD ")
   topos(CFrame.new(-2062.7475585938, 50.473892211914, -10232.568359375))
   elseif _G.SelectIsland == "Cake Island" then
   topos(CFrame.new(-1884.7747802734375, 19.327526092529297, -11666.8974609375))
-  elseif _G.SelectIsland == "Noname Island(New)" then
+  elseif _G.SelectIsland == "Chocolate Island" then
   topos(CFrame.new(231.742981, 25.3354111, -12199.0537, 0.998278677, -5.16006757e-08, 0.0586484075, 4.79685092e-08, 1, 6.33390442e-08, -0.0586484075, -6.04167383e-08, 0.998278677))
+  elseif _G.SelectIsland == "Candy Island(New)" then
+  topos(CFrame.new(-1151.48987, 16.1422901, -14445.6904, -0.316594511, -6.85698254e-08, -0.948560953, -2.05343067e-08, 1, -6.54346692e-08, 0.948560953, -1.23821675e-09, -0.316594511))
   end
   until not _G.TeleportIsland
   end
   StopTween(_G.TeleportIsland)
  end)
  
- Teleport:Button("Instant Teleport",function()
+ Teleport:Button("TP bypass Island",function()
 		 _G.Instant = true
         if _G.Instant == true then
 	     if _G.SelectIsland == "Port Town" then 
@@ -9474,6 +9477,20 @@ Teleport:Seperator(" WORLD ")
         game.Players.LocalPlayer.Character.Head:Destroy()
         wait(0.5)
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-1884.7747802734375, 19.327526092529297, -11666.8974609375)
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
+        until game:GetService("Players").LocalPlayer.Data.SpawnPoint.Value == SPAWNPOINT 
+        elseif _G.SelectIsland == "Chocolate Island" then
+	    repeat task.wait()
+        game.Players.LocalPlayer.Character.Head:Destroy()
+        wait(0.5)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(231.742981, 25.3354111, -12199.0537, 0.998278677, -5.16006757e-08, 0.0586484075, 4.79685092e-08, 1, 6.33390442e-08, -0.0586484075, -6.04167383e-08, 0.998278677)
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
+        until game:GetService("Players").LocalPlayer.Data.SpawnPoint.Value == SPAWNPOINT 
+        elseif _G.SelectIsland == "Candy Island(New)" then
+	    repeat task.wait()
+        game.Players.LocalPlayer.Character.Head:Destroy()
+        wait(0.5)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-1151.48987, 16.1422901, -14445.6904, -0.316594511, -6.85698254e-08, -0.948560953, -2.05343067e-08, 1, -6.54346692e-08, 0.948560953, -1.23821675e-09, -0.316594511)
         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
         until game:GetService("Players").LocalPlayer.Data.SpawnPoint.Value == SPAWNPOINT 
         ----------------------------------------------------------------------------------------------------
@@ -9716,7 +9733,8 @@ chip = {
 	"Magma",
 	"Human: Buddha",
 	"Sand",
-	"Bird: Phoenix"
+	"Bird: Phoenix",
+	"Dough"
 }
 
 Dungeon:Dropdown("Select Dungeon",chip,function(value)
