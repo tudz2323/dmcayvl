@@ -8859,6 +8859,10 @@ Race:Button("Teleport To Lever Pull",function()
   topos(CFrame.new(28575.181640625, 14936.6279296875, 72.31636810302734))
 end)
 
+Race:Button("Teleport To Gear",function()
+  topos(game:GetService("Workspace").Map.MysticIsland:FindFirstChildOfClass("MeshPart").CFrame)
+end)
+
 Race:Button("Teleport To Acient One (Must Be in Temple Of Time!)",function()
   topos(CFrame.new(28981.552734375, 14888.4267578125, -120.245849609375))
 end)
