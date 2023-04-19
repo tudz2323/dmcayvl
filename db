@@ -8893,6 +8893,63 @@ if World1 or World2 then
 end
 
 if World3 then
+Race:Seperator("Boats")
+BoatsName = {}
+
+for i,v in pairs(game:GetService("Workspace").Boats:GetChildren()) do  
+  table.insert(BoatsName ,v.Name)
+end
+
+local Boats = Race:Dropdown("Selected Boats",BoatsName,function(plys)
+  _G.SelectB = plys
+end)
+    
+Race:Button("Refrsh Boats",function()
+  BoatsName = {}
+  Boats:Clear()
+  for i,v in pairs(game:GetService("Workspace").Boats:GetChildren()) do  
+     Boats:Add(v.Name)
+  end
+end)
+
+Race:Button("Bring Boats",function()
+   game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Boats[_G.SelectB].Seat.CFrame
+end)
+
+Race:Toggle("Teleport to Boats",_G.TPB,function(bool)
+   _G.TPB = bool       
+ StopTween(_G.TPB)
+
+   if _G.TPB then
+       _G.Boats = true
+       while _G.Boats do wait()
+           Distance = (game:GetService("Workspace").Boats[_G.SelectB].VehicleSeat.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+           Speed = 220
+           tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(Distance/Speed, Enum.EasingStyle.Linear)
+           tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = game:GetService("Workspace").Boats[_G.SelectB].VehicleSeat.CFrame})
+           tween:Play()
+           _G.Clip = true
+           wait(Distance/Speed)
+       end
+   elseif _G.TPB == false then
+       _G.Boats = false
+       while _G.Boats do wait()
+           Distance = (game:GetService("Workspace").Boats[_G.SelectB].VehicleSeat.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+           Speed = 220
+           tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(Distance/Speed, Enum.EasingStyle.Linear)
+           tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = game:GetService("Workspace").Boats[_G.SelectB].VehicleSeat.CFrame})
+           tween:Play()
+           _G.Clip = true
+           wait(Distance/Speed)
+       end
+       tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(.1, Enum.EasingStyle.Linear)
+       tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame})
+       tween:Play()
+       _G.Clip = false
+   end
+end)
+
+
 Race:Seperator("Race V4")
 local FullMoon = Race:Label("....")
 task.spawn(function()
