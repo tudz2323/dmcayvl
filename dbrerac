@@ -4578,6 +4578,25 @@ spawn(function()
  end
  end
  end)
+ 
+ Setting:Toggle("Black Screen",false,function(value)
+	StartBlackScreen = value
+	local BlackScreen = game:GetService("Players").LocalPlayer.PlayerGui.Main.Blackscreen
+	getgenv().DefaultSize = BlackScreen.Size
+	getgenv().NewSize = UDim2.new(500, 0, 500, 500)
+	getgenv().StartBlackScreen = false
+	if StartBlackScreen then
+		BlackScreen.Size = NewSize
+	else
+		BlackScreen.Size = UDim2.new(DefaultSize)
+	end
+	_G.WhiteScreen = value
+	if _G.WhiteScreen == true then
+		game:GetService("RunService"):Set3dRenderingEnabled(false)
+	elseif _G.WhiteScreen == false then
+		game:GetService("RunService"):Set3dRenderingEnabled(true)
+	end
+end)
 
 Setting:Toggle("White Screen [ Booster FPS ]",_G.WhiteScreen,function(value)
  _G.WhiteScreen = value
@@ -8971,6 +8990,11 @@ task.spawn(function()
         end)
     end
 end)
+
+Race:Toggle("Teleport To Gear",function()
+  topos(game:GetService("Workspace").Map.MysticIsland:FindFirstChildOfClass("MeshPart").CFrame)
+end)
+Race:Line()
     
     Race:Button("Teleport To Timple Of Time",function()
   Game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(28286.35546875, 14895.3017578125, 102.62469482421875)
@@ -8978,10 +9002,6 @@ end)
     
 Race:Button("Teleport To Lever Pull",function()
   topos(CFrame.new(28575.181640625, 14936.6279296875, 72.31636810302734))
-end)
-
-Race:Button("Teleport To Gear",function()
-  topos(game:GetService("Workspace").Map.MysticIsland:FindFirstChildOfClass("MeshPart").CFrame)
 end)
 
 Race:Button("Teleport To Acient One (Must Be in Temple Of Time!)",function()
