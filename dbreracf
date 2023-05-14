@@ -30,6 +30,34 @@ end
 
 
 
+game.StarterGui:SetCore("SendNotification",  {
+
+ Title = "FTS X HUB";
+
+ Text = "Loading...";
+
+ Icon = "rbxassetid://12986011583";
+
+ Duration = 5;
+
+ Callback = NotificationBindable;
+
+})
+
+game.StarterGui:SetCore("SendNotification",  {
+
+ Title = "FTS X HUB";
+
+ Text = "Success";
+
+ Icon = "rbxassetid://12986011583";
+
+ Duration = 5;
+
+ Callback = NotificationBindable;
+
+})
+
 local ThunderScreen = Instance.new("ScreenGui")
 local ThunderToggleUI = Instance.new("TextButton")
 local ThunderCornerUI = Instance.new("UICorner")
