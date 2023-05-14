@@ -9034,7 +9034,7 @@ task.spawn(function()
 end)
 
 Race:Toggle("Teleport To Gear",function()
-   game:GetService("Workspace").Map.MysticIsland:FindFirstChildOfClass("MeshPart").CFrame)
+  topos(game:GetService("Workspace").Map["MysticIsland"]:FindFirstChild("MeshPart").CFrame)
 end)
 Race:Line()
     
