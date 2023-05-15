@@ -42,7 +42,7 @@ game.StarterGui:SetCore("SendNotification",  {
 
  Callback = NotificationBindable;
 
-})
+}
 
 game.StarterGui:SetCore("SendNotification",  {
 
