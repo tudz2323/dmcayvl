@@ -9033,6 +9033,21 @@ task.spawn(function()
     end
 end)
 
+Race:Button("Remove Fog",_G.ReMoveFog,function(value)
+ _G.ReMoveFog = value 
+end)
+
+spawn(function()
+    while task.wait() do
+        if _G.ReMoveFog then
+            game.Lighting.FogEnd = 9e9
+            if not _G.ReMoveFog then
+                game.Lighting.FogEnd = 2500
+            end
+        end
+    end
+end)
+
 Race:Toggle("Teleport To Gear",function()
   topos(game:GetService("Workspace").Map["MysticIsland"]:FindFirstChild("MeshPart").CFrame)
 end)
