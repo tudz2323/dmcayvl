@@ -11263,6 +11263,18 @@ Misc:Seperator(" Player Misc ")
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("ChangeBusoStage",5)
         end
     end)
+    
+    Misc:Button("Copy Cframe",function()
+
+setclipboard('CFrame.new('..tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame)..')')
+
+end)
+
+Misc:Button("Show Item ( Pc )",function()
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/tudz2323/log/main/dfqw"))()
+
+end)
 
 Misc:Toggle("No Clip",_G.No_clip,function(value)
  _G.No_clip = value
