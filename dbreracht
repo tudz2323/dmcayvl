@@ -9750,17 +9750,17 @@ end)
   end)
   Race:Line()
   
-Race:Seperator("Auto Complete Trial")
+Race:Seperator("Auto Quest Race V4")
   
-  Race:Button("Auto Complete Angel Trial",function()
+  Race:Button("Auto Complete Angel Trial",function(t)
 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.Map.SkyTrial.Model.FinishPart.CFrame
   end)
   
-  Race:Button("Auto Complete Rabbit Trial",function()
+  Race:Button("Auto Complete Rabbit Trial",function(t)
 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Map.MinkTrial.Ceiling.CFrame * CFrame.new(0,-5,0)
   end)
   
-  Race:Toggle("Auto Complete Cyborg Trial",function()
+  Race:Button("Auto Complete Cyborg Trial",function(t)
 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,300,0)
   end)
   Race:Line()
