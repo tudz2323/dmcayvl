@@ -246,7 +246,7 @@ Logo.Image = "rbxassetid://12986011583"
 	Hub.Position = UDim2.new(0, 150, 0, 0)
 	Hub.Size = UDim2.new(0, 81, 0, 27)
 	Hub.Font = Enum.Font.GothamSemibold
-	Hub.Text = " Blox Fruit UPD 18"
+	Hub.Text = " Blox Fruit New Update"
 	Hub.TextColor3 = Color3.fromRGB(255, 255, 255)
 	Hub.TextSize = 14.000
 	Hub.TextXAlignment = Enum.TextXAlignment.Left
@@ -4278,18 +4278,18 @@ spawn(function()
 end)
 
 --------------------------
-local Main = Library:Tab("Main","rbxassetid://11446825283")
-local Setting = Library:Tab("Settings","rbxassetid://11446835336")
-local Weapon = Library:Tab("Weapons","rbxassetid://11446859498")
-local Race = Library:Tab("Race V4","rbxassetid://11446900930")
-local Stats = Library:Tab("Stats","rbxassetid://11447069304")
-local P = Library:Tab("Player","rbxassetid://11446900930")
-local Teleport = Library:Tab("Teleport","rbxassetid://11446920523")
-local Dungeon = Library:Tab("Dungeon","rbxassetid://11446957539")
-local DevilFruit = Library:Tab("Fruit+Esp","rbxassetid://11446965348")
-local Shop = Library:Tab("Shop","rbxassetid://6031265976")
-local Misc = Library:Tab("Misc","rbxassetid://11447063791")
-local Op = Library:Tab("Status", "rbxassetid://7040410130")
+local Main = Library:Tab("🏠 Main","rbxassetid://11446825283")
+local Setting = Library:Tab("⚙ Settings","rbxassetid://11446835336")
+local Weapon = Library:Tab("⚔ Weapons","rbxassetid://11446859498")
+local Race = Library:Tab("🐇 Race V4","rbxassetid://11446900930")
+local Stats = Library:Tab("📊 Stats","rbxassetid://11447069304")
+local P = Library:Tab("🎯 Player","rbxassetid://11446900930")
+local Teleport = Library:Tab("🚪 Teleport","rbxassetid://11446920523")
+local Dungeon = Library:Tab("🔫 Dungeon","rbxassetid://11446957539")
+local DevilFruit = Library:Tab("🍎 Fruit+Esp","rbxassetid://11446965348")
+local Shop = Library:Tab("🛒 Shop","rbxassetid://6031265976")
+local Misc = Library:Tab("📈 Misc","rbxassetid://11447063791")
+local Op = Library:Tab("📉 Status", "rbxassetid://7040410130")
 --------------------------------------------------------------------
 
 Setting:Label("Join My Discord For More Info!")
