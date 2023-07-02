@@ -9714,7 +9714,7 @@ spawn(function()
                     for i,v in pairs(game:GetService("Workspace").Map.MysticIsland:GetChildren()) do 
                         if v:IsA("MeshPart")then 
                             if v.Material ==  Enum.Material.Neon then  
-                                Tween(v.CFrame)
+                                topos(v.CFrame)
                             end
                         end
                     end
@@ -9728,7 +9728,7 @@ spawn(function()
     pcall(function()
         while wait() do
             if _G.Mirage then
-				if game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then	Tween(CFrame.new(game:GetService("Workspace").Map.MysticIsland.Center.Position.X,500,game:GetService("Workspace").Map.MysticIsland.Center.Position.Z))
+				if game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then	topos(CFrame.new(game:GetService("Workspace").Map.MysticIsland.Center.Position.X,500,game:GetService("Workspace").Map.MysticIsland.Center.Position.Z))
 				end
 			end
         end
