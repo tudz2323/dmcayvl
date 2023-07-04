@@ -4442,7 +4442,7 @@ if game:GetService("ReplicatedStorage").Effect.Container:FindFirstChild("Respawn
 	game:GetService("ReplicatedStorage").Effect.Container.Respawn:Destroy()
 end
 
-Setting:Toggle("Bring Mob [Normal]",true,function(value)
+Setting:Toggle("Bring Mob [Normal]",false,function(value)
  _G.BringNormal = value
 end)
 
