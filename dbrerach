@@ -4466,7 +4466,7 @@ spawn(function()
     end)
 	end)
 	
-Setting:Toggle("Bring Mob [Extra+Lag]",false,function(value)
+Setting:Toggle("Bring Mob [Extra+Lag]",true,function(value)
  _G.BringExtra = value
 end)
 
@@ -4552,7 +4552,7 @@ Setting:Toggle("Auto Haki", true,function(vu)
       end
      end)
      
-     Setting:Toggle("Auto Awakening V4",true,function(vu)
+     Setting:Toggle("Auto Awakening V4",false,function(vu)
 	_G.AutoAwakeningRace = vu
 end)
 
