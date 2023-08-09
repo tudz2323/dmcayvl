@@ -9733,7 +9733,7 @@ end
     end)
 end)
 
-Race:Toggle("Auto Mirage Island",false,function(value)
+Race:Toggle("Auto Mirage Island [ Working ]",false,function(value)
   _G.Mirage = value
 StopTween(_G.Mirage)
   end)
@@ -9764,7 +9764,7 @@ Race:Button("Remove Fog",function()
     game.Lighting.Sky:Destroy()
     end)
 
-Race:Toggle("Teleport To Gear [ Beta ]",_G.TPgear,function(value)
+Race:Toggle("Teleport To Gear [ Working ]",_G.TPgear,function(value)
 _G.TPgear = value 
 end)
 
