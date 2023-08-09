@@ -9798,19 +9798,55 @@ spawn(function()
 end)
 
 Race:Line()
-    
-    Race:Button("Teleport To Timple Of Time",function()
-  Game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(28286.35546875, 14895.3017578125, 102.62469482421875)
-    end)
-    
-Race:Button("Teleport To Lever Pull",function()
-  topos(CFrame.new(28575.181640625, 14936.6279296875, 72.31636810302734))
-end)
 
-Race:Button("Teleport To Acient One (Must Be in Temple Of Time!)",function()
-  topos(CFrame.new(28981.552734375, 14888.4267578125, -120.245849609375))
-end)
-   
+MysList = {
+	"Temple of Time",
+	"Lever Pull",
+	"Mink Door",
+	"Cyborg Door",
+	"Fish Door",
+	"Human Door",
+	"Ghoul Door",
+	"Angle Door",
+	"Ancient One"
+}	
+
+
+Race:Dropdown("Race List ",MysList,function(value)
+		_G.MysChoose = value
+ end)
+
+
+ Race:Toggle("Start Tween", {Toggled=false , Description = false}, function(value)
+	_G.Start_Tween_Mys = value    
+	if _G.Start_Tween_Mys == true then
+		repeat wait()
+			if _G.MysChoose == "Temple of Time" then
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(28286.35546875, 14896.8505859375, 102.62469482421875)
+		        elseif _G.MysChoose == "Lever Pull" then
+                                topos(CFrame.new(28575.181640625, 14936.6279296875, 72.31636810302734))
+			elseif _G.MysChoose == "Mink Door" then
+				topos(CFrame.new(29012.341796875, 14890.9755859375, -380.1492614746094))
+			elseif _G.MysChoose == "Cyborg Door" then
+				topos(CFrame.new(28502.681640625, 14895.9755859375, -423.7279357910156))
+			elseif _G.MysChoose == "Fish Door" then
+				topos(CFrame.new(28231.17578125, 14890.9755859375, -211.64173889160156))
+			elseif _G.MysChoose == "Human Door" then
+				topos(CFrame.new(29221.822265625, 14890.9755859375, -205.99114990234375))
+			elseif _G.MysChoose == "Ghoul Door" then
+				topos(CFrame.new(28674.244140625, 14890.6767578125, 445.4310607910156))
+			elseif _G.MysChoose == "Angle Door" then
+				topos(CFrame.new(28960.158203125, 14919.6240234375, 235.03948974609375))
+			elseif _G.MysChoose == "Ancient One" then
+				topos(CFrame.new(28975.416015625, 14889.9755859375, -119.18738555908203))
+			end
+		until not _G.Start_Tween_Mys
+	end
+	StopTween(_G.Start_Tween_Mys)
+	end)
+
+Race:Line()
+
    Race:Button("Unlock Lever.", function()
 venyx:Notify("Unlocked")
 if game:GetService("Workspace").Map["Temple of Time"].Lever.Prompt:FindFirstChild("ProximityPrompt") then
@@ -9873,31 +9909,6 @@ Race:Toggle("Disabled Inf Stairs", nil, function(value)
 	game.Players.LocalPlayer.Character.InfiniteStairs.Disabled = value
 end)
    Race:Line()
- 
-  Race:Button("Teleport Cyborg Door (Must Be in Temple Of Time!)",function()
-  topos(CFrame.new(28492.4140625, 14894.4267578125, -422.1100158691406))
-  end)
-  
-  Race:Button("Teleport Fish Door (Must Be in Temple Of Time!)",function()
-  topos(CFrame.new(28224.056640625, 14889.4267578125, -210.5872039794922))
-  end)
-  
-  Race:Button("Teleport Ghoul Door (Must Be in Temple Of Time!)",function()
-  topos(CFrame.new(28672.720703125, 14889.1279296875, 454.5961608886719))
-  end)
-  
-  Race:Button("Teleport Human Door (Must Be in Temple Of Time!)",function()
-  topos(CFrame.new(29237.294921875, 14889.4267578125, -206.94955444335938))
-  end)
-  
-  Race:Button("Teleport Mink Door (Must Be in Temple Of Time!)",function()
-  topos(CFrame.new(29020.66015625, 14889.4267578125, -379.2682800292969))
-  end)
-  
-  Race:Button("Teleport Sky Door (Must Be in Temple Of Time!)",function()
-  topos(CFrame.new(28967.408203125, 14918.0751953125, 234.31198120117188))
-  end)
-  Race:Line()
   
 Race:Seperator("Auto Quest Race V4")
   
@@ -9998,6 +10009,126 @@ spawn(function()
 		end
 	end
 end)
+
+Race:Toggle("Auto Complete All Trial [ Beta ]", {Toggled=false , Description = false}, function(value)
+		_G.AutoQuestRace = value
+	end)
+	spawn(function()
+		pcall(function()
+			while wait() do
+				if _G.AutoQuestRace then
+					if game:GetService("Players").LocalPlayer.Data.Race.Value == "Human" then
+						for i,v in pairs(game.Workspace.Enemies:GetDescendants()) do
+							if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+								pcall(function()
+									repeat wait(.1)
+										v.Humanoid.Health = 0
+										v.HumanoidRootPart.CanCollide = false
+										sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+									until not _G.AutoQuestRace or not v.Parent or v.Humanoid.Health <= 0
+								end)
+							end
+						end
+					elseif game:GetService("Players").LocalPlayer.Data.Race.Value == "Skypiea" then
+						for i,v in pairs(game:GetService("Workspace").Map.SkyTrial.Model:GetDescendants()) do
+							if v.Name ==  "snowisland_Cylinder.081" then
+								topos(v.CFrame* CFrame.new(0,0,0))
+							end
+						end
+					elseif game:GetService("Players").LocalPlayer.Data.Race.Value == "Fishman" then
+						for i,v in pairs(game:GetService("Workspace").SeaBeasts.SeaBeast1:GetDescendants()) do
+							if v.Name ==  "HumanoidRootPart" then
+								topos(v.CFrame* CFrame.new(20,450,0))
+								for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+									if v:IsA("Tool") then
+										if v.ToolTip == "Melee" then -- "Blox Fruit" , "Sword" , "Wear" , "Agility"
+											game.Players.LocalPlayer.Character.Humanoid:EquipWeapon(v)
+										end
+									end
+								end
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,122,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,122,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								wait(.2)
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,120,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,120,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								wait(.2)
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,99,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,99,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+									if v:IsA("Tool") then
+										if v.ToolTip == "Blox Fruit" then -- "Blox Fruit" , "Sword" , "Wear" , "Agility"
+											game.Players.LocalPlayer.Character.Humanoid:EquipWeapon(v)
+										end
+									end
+								end
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,122,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,122,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								wait(.2)
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,120,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,120,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								wait(.2)
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,99,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,99,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+						
+								wait(0.5)
+								for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+									if v:IsA("Tool") then
+										if v.ToolTip == "Sword" then -- "Blox Fruit" , "Sword" , "Wear" , "Agility"
+											game.Players.LocalPlayer.Character.Humanoid:EquipWeapon(v)
+										end
+									end
+								end
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,122,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,122,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								wait(.2)
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,120,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,120,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								wait(.2)
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,99,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,99,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								wait(0.5)
+								for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+									if v:IsA("Tool") then
+										if v.ToolTip == "Gun" then -- "Blox Fruit" , "Sword" , "Wear" , "Agility"
+											game.Players.LocalPlayer.Character.Humanoid:EquipWeapon(v)
+										end
+									end
+								end
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,122,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,122,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								wait(.2)
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,120,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,120,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								wait(.2)
+								game:GetService("VirtualInputManager"):SendKeyEvent(true,99,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+								game:GetService("VirtualInputManager"):SendKeyEvent(false,99,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
+							end
+						end
+					elseif game:GetService("Players").LocalPlayer.Data.Race.Value == "Cyborg" then
+						topos(CFrame.new(28654, 14898.7832, -30, 1, 0, 0, 0, 1, 0, 0, 0, 1))
+					elseif game:GetService("Players").LocalPlayer.Data.Race.Value == "Ghoul" then
+						for i,v in pairs(game.Workspace.Enemies:GetDescendants()) do
+							if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+								pcall(function()
+									repeat wait(.1)
+										v.Humanoid.Health = 0
+										v.HumanoidRootPart.CanCollide = false
+										sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+									until not _G.AutoQuestRace or not v.Parent or v.Humanoid.Health <= 0
+								end)
+							end
+						end
+					elseif game:GetService("Players").LocalPlayer.Data.Race.Value == "Mink" then
+						for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
+							if v.Name == "StartPoint" then
+								topos(v.CFrame* CFrame.new(0,10,0))
+							  end
+						   end
+					end
+				end
+			end
+		end)
+	end)
   Race:Line()
   
   Race:Button("Teleport To Safe Zone When Pvp (Must Be in Temple Of Time!)",function()
