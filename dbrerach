@@ -4254,11 +4254,6 @@ Setting:Label("Join My Discord For More Info!")
 
 Setting:Line()
 
-Setting:Button("Copy Discord Link",function()
- 
- setclipboard("")
- end)
-
 Setting:Seperator(" Setting ")
 Setting:Toggle("Auto Set Spawn Points",true,function(value)
  _G.AutoSetSpawn = value
@@ -4275,6 +4270,10 @@ spawn(function()
   end
   end)
  end)
+
+Setting:Toggle("Auto Click",false,function(value)
+ _G.click = value
+end)
 
 Setting:Toggle("Anti AFK",true,function()
 local vu = game:GetService("VirtualUser")
@@ -4504,63 +4503,184 @@ end)
 		end)
 		
 Setting:Toggle("Fast Attack",true,function(value)
- _G.FastAttack = value
-end)
+	_G.FastAttack = value
+end)      
 
--- [[ Fast Attack Fixed / Shadow Hub / Dont edit , or ur will be messed up! ]]
+_G.Fast_Delay = 0.5
 
--- [[ Properties ]]
+local CurveFrame = debug.getupvalues(require(game:GetService("Players").LocalPlayer.PlayerScripts:WaitForChild("CombatFramework")))[2]
+local VirtualUser = game:GetService("VirtualUser")
+local RigControllerR = debug.getupvalues(require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework.RigController))[2]
+local Client = game:GetService("Players").LocalPlayer
+local DMG = require(Client.PlayerScripts.CombatFramework.Particle.Damage)
+local CameraShaker = require(game.ReplicatedStorage.Util.CameraShaker)
+CameraShaker:Stop()
+function CurveFuckWeapon()
+    local p13 = CurveFrame.activeController
+    local wea = p13.blades[1]
+    if not wea then
+        return
+    end
+    while wea.Parent ~= game.Players.LocalPlayer.Character do
+        wea = wea.Parent
+    end
+    return wea
+end
 
-require(game.ReplicatedStorage.Util.CameraShaker):Stop()
-
-xShadowFastAttackx = require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework)
-
-xShadowx = debug.getupvalues(xShadowFastAttackx)[2]
-
-spawn(function()
-    game:GetService("RunService").RenderStepped:Connect(function()
-        if _G.FastAttack then
-            if typeof(xShadowx) == "table" then
-                pcall(function()
-                    xShadowx.activeController.timeToNextAttack = (math.huge^math.huge^math.huge)
-                    xShadowx.activeController.timeToNextAttack = 0
-                    xShadowx.activeController.hitboxMagnitude = 200
-                    xShadowx.activeController.active = false
-                    xShadowx.activeController.timeToNextBlock = 0
-                    xShadowx.activeController.focusStart = 0
-                    xShadowx.activeController.increment = 4
-                    xShadowx.activeController.blocking = false
-                    xShadowx.activeController.attacking = false
-                    xShadowx.activeController.humanoid.AutoRotate = 50
-                end)
+function getHits(Size)
+    local Hits = {}
+    local Enemies = workspace.Enemies:GetChildren()
+    local Characters = workspace.Characters:GetChildren()
+    for i = 1, #Enemies do
+        local v = Enemies[i]
+        local Human = v:FindFirstChildOfClass("Humanoid")
+        if
+            Human and Human.RootPart and Human.Health > 0 and
+                game.Players.LocalPlayer:DistanceFromCharacter(Human.RootPart.Position) < Size + 5
+         then
+            table.insert(Hits, Human.RootPart)
+        end
+    end
+    for i = 1, #Characters do
+        local v = Characters[i]
+        if v ~= game.Players.LocalPlayer.Character then
+            local Human = v:FindFirstChildOfClass("Humanoid")
+            if
+                Human and Human.RootPart and Human.Health > 0 and
+                    game.Players.LocalPlayer:DistanceFromCharacter(Human.RootPart.Position) < Size + 5
+             then
+                table.insert(Hits, Human.RootPart)
             end
         end
+    end
+    return Hits
+end
+
+function Boost()
+    task.spawn(function()
+    	game:GetService("ReplicatedStorage").RigControllerEvent:FireServer("weaponChange",tostring(CurveFuckWeapon()))
     end)
-end)
-
-Setting:Dropdown("Select Fast Attack Type",{'Normal','Fast','Super Fast'},function(t)
-	if t == 'Normal' then
-		_G.FastDelay = 0.3
-	end
-	if t == 'Fast' then
-		_G.FastDelay = 0.1
-	end
-	if t == 'Super Fast' then
-		_G.FastDelay = 0
-	end
-end)
-
-
-spawn(function()
-while true do task.wait()
-pcall(function()
-if _G.FastAttack then
-repeat wait(_G.FastDelay) AttackNoCD() until not _G.FastAttack
-
 end
-end)
+
+function Unboost()
+    tsak.spawn(function()
+    	game:GetService("ReplicatedStorage").RigControllerEvent:FireServer("unequipWeapon",tostring(CurveFuckWeapon()))
+    end)
 end
+
+local cdnormal = 0
+local Animation = Instance.new("Animation")
+local CooldownFastAttack = 0
+
+FastAttack = function()
+    local ac = CurveFrame.activeController
+    if ac and ac.equipped then
+        task.spawn(function()
+            if tick() - cdnormal > 0.5 then
+                ac:attack()
+                cdnormal = tick()
+            else
+                Animation.AnimationId = ac.anims.basic[2]
+                ac.humanoid:LoadAnimation(Animation):Play(1, 1)
+                game:GetService("ReplicatedStorage").RigControllerEvent:FireServer("hit", getHits(120), 2, "")
+            end
+        end)
+    end
+end
+
+bs = tick()
+task.spawn(function()
+	while task.wait(_G.Fast_Delay) do
+		if _G.FastAttack then
+		    _G.Fast = true
+			if bs - tick() > 0.75 then
+				task.wait()
+				bs = tick()
+			end
+			pcall(function()
+				for i, v in pairs(game.Workspace.Enemies:GetChildren()) do
+					if v.Humanoid.Health > 0 then
+						if (v.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 100 then
+							FastAttack()
+							task.wait()
+							Boost()
+						end
+					end
+				end
+			end)
+		end
+	end
 end)
+
+k = tick()
+task.spawn(function()
+    if _G.Fast then
+    while task.wait(.2) do
+            if k - tick() > 0.75 then
+                task.wait()
+                k = tick()
+            end
+            end
+            pcall(function()
+                for i, v in pairs(game.Workspace.Enemies:GetChildren()) do
+                    if v.Humanoid.Health > 0 then
+                        if (v.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 100 then
+                            task.wait(.000025)
+                            Unboost()
+                        end
+                    end
+                end
+            end)
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if _G.Fast then
+	   pcall(function()
+		CurveFrame.activeController.timeToNextAttack = -1
+		CurveFrame.activeController.focusStart = 0
+		CurveFrame.activeController.hitboxMagnitude = 40
+		CurveFrame.activeController.humanoid.AutoRotate = true
+		CurveFrame.activeController.increment = 1 + 1 / 1
+	   end)
+    end
+    end
+end)
+
+abc = true
+task.spawn(function()
+    local a = game.Players.LocalPlayer
+    local b = require(a.PlayerScripts.CombatFramework.Particle)
+    local c = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
+    if not shared.orl then
+        shared.orl = c.wrapAttackAnimationAsync
+    end
+    if not shared.cpc then
+        shared.cpc = b.play
+    end
+    if abc then
+        pcall(function()
+            c.wrapAttackAnimationAsync = function(d, e, f, g, h)
+            local i = c.getBladeHits(e, f, g)
+            if i then
+                b.play = function()
+                end
+                d:Play(0.25, 0.25, 0.25)
+                h(i)
+                b.play = shared.cpc
+                wait(.5)
+                d:Stop()
+            end
+            end
+        end)
+    end
+end)
+
+
+
+
+
 
 Setting:Toggle("Auto Haki", true,function(vu)
       _G.AutoHakiBuso = vu
@@ -4899,10 +5019,6 @@ function EquipWeaponMelee()
 		end
 	end)
 end
-
-Main:Toggle("Auto Click",true,function(value)
- _G.click = value
-end)
 
 Main:Toggle("Anti Cheat Bypass( Do Not Turn Off )", true, function(value)
   _G.SafeFarm = value
@@ -9091,103 +9207,6 @@ end
 
 if World3 then
 Race:Seperator("Boats")
-BoatList = {
-    "Pirate Sloop",
-    "Enforcer",
-    "Rocket Boost",
-    "Dinghy",
-    "Pirate Basic",
-    "Pirate Brigade"
-}
-
-spawn(function()
-    while wait() do
-        pcall(function()
-            if SelectBoat == "Pirate Sloop" then
-                _G.SelectBoat = "PirateSloop"
-            else
-                if SelectBoat == "Enforcer" then
-                    _G.SelectBoat = "Enforcer"
-                else
-                    if SelectBoat == "RocketBoost" then
-                        _G.SelectBoat = "RocketBoost"
-                    else
-                        if SelectBoat == "PirateBasic" then
-                            _G.SelectBoat = "PirateBasic"
-                        else
-                            if SelectBoat == "PirateBrigade" then
-                                _G.SelectBoat = "PirateBrigade"
-                            end
-                        end
-                    end
-                end
-            end
-        end)
-    end
-end)
-
-Race:Dropdown("Select Boats",BoatList,function(value)
-    SelectBoat = value
-end)
-
-Race:Button("Buy Boat",function()
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat",_G.SelectBoat)
-end)
-
-BoatsName = {}
-
-for i,v in pairs(game:GetService("Workspace").Boats:GetChildren()) do  
-  table.insert(BoatsName ,v.Name)
-end
-
-local Boats = Race:Dropdown("Selected Boats",BoatsName,function(plys)
-  _G.SelectB = plys
-end)
-    
-Race:Button("Refrsh Boats",function()
-  BoatsName = {}
-  Boats:Clear()
-  for i,v in pairs(game:GetService("Workspace").Boats:GetChildren()) do  
-     Boats:Add(v.Name)
-  end
-end)
-
-Race:Button("Bring Boats",function()
-   game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Boats[_G.SelectB].Seat.CFrame
-end)
-
-Race:Toggle("Teleport to Boats",_G.TPB,function(bool)
-   _G.TPB = bool       
- StopTween(_G.TPB)
-
-   if _G.TPB then
-       _G.Boats = true
-       while _G.Boats do wait()
-           Distance = (game:GetService("Workspace").Boats[_G.SelectB].VehicleSeat.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-           Speed = 220
-           tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(Distance/Speed, Enum.EasingStyle.Linear)
-           tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = game:GetService("Workspace").Boats[_G.SelectB].VehicleSeat.CFrame})
-           tween:Play()
-           _G.Clip = true
-           wait(Distance/Speed)
-       end
-   elseif _G.TPB == false then
-       _G.Boats = false
-       while _G.Boats do wait()
-           Distance = (game:GetService("Workspace").Boats[_G.SelectB].VehicleSeat.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-           Speed = 220
-           tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(Distance/Speed, Enum.EasingStyle.Linear)
-           tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = game:GetService("Workspace").Boats[_G.SelectB].VehicleSeat.CFrame})
-           tween:Play()
-           _G.Clip = true
-           wait(Distance/Speed)
-       end
-       tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(.1, Enum.EasingStyle.Linear)
-       tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame})
-       tween:Play()
-       _G.Clip = false
-   end
-end)
 
 Race:Toggle("Auto Summon Mirage ( Beta )",_G.dao,function(Value)
 	
