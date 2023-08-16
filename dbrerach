@@ -5019,32 +5019,29 @@ function EquipWeaponMelee()
 		end
 	end)
 end
-
-Main:Toggle("Anti Cheat Bypass( Do Not Turn Off )", true, function(value)
-  _G.SafeFarm = value
-CheckAntiCheatBypass()
-  Notification("Anti Cheat Bypass Activated ✅")
-end)
-
 function CheckAntiCheatBypass()
-    for i,v in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do
-        if v:IsA("LocalScript") then
-            if v.Name == "General" or v.Name == "Shiftlock"  or v.Name == "FallDamage" or v.Name == "4444" or v.Name == "CamBob" or v.Name == "JumpCD" or v.Name == "Looking" or v.Name == "Run" then
-                v:Destroy()
-            end
-        end
-     end
-     for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerScripts:GetDescendants()) do
-        if v:IsA("LocalScript") then
-            if v.Name == "RobloxMotor6DBugFix" or v.Name == "Clans"  or v.Name == "Codes" or v.Name == "CustomForceField" or v.Name == "MenuBloodSp"  or v.Name == "PlayerList" then
-                v:Destroy()
-            end
-        end
-     end
-    end
+ for i,v in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do
+	 if v:IsA("LocalScript") then
+		 if v.Name == "General" or v.Name == "Shiftlock"  or v.Name == "FallDamage" or v.Name == "4444" or v.Name == "CamBob" or v.Name == "JumpCD" or v.Name == "Looking" or v.Name == "Run" then
+			 v:Destroy()
+		 end
+	 end
+  end
+  for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerScripts:GetDescendants()) do
+	 if v:IsA("LocalScript") then
+		 if v.Name == "RobloxMotor6DBugFix" or v.Name == "Clans"  or v.Name == "Codes" or v.Name == "CustomForceField" or v.Name == "MenuBloodSp"  or v.Name == "PlayerList" then
+			 v:Destroy()
+		 end
+	 end
+  end
+ end
 
 CheckAntiCheatBypass()
 
+Main:Toggle("Anti Cheat Bypass", true, function(value)
+_G.SafeFarm = value
+CheckAntiCheatBypass()
+end)
 
 			
 
@@ -6545,7 +6542,6 @@ end)
 		end)
 	end)
 	
-local CakePos = CFrame.new(-1891.74169921875, 272.5708312988281, -11915.3212890625)
 	spawn(function()
 		while wait() do
 			if _G.Auto_Cake_Prince then
@@ -6566,12 +6562,6 @@ local CakePos = CFrame.new(-1891.74169921875, 272.5708312988281, -11915.32128906
 								end    
 							end    
 						else
-						if BypassTP then
-							elseif (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - CakePos.Position).Magnitude > 1500 then
-							BTP(CakePos)
-						else
-							 topos(CakePos)
-						end
 							topos(CFrame.new(-2009.2802734375, 4532.97216796875, -14937.3076171875)) 
 						end
 					else
@@ -9481,6 +9471,10 @@ end)
    Race:Line()
   
 Race:Seperator("Auto Quest Race V4")
+
+Race:Button("Auto Upgrade Tier",function(t)
+game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer('UpgradeRace','Buy')
+end)
   
   Race:Button("Auto Complete Sky Trial",_G.AutoTialRaceSky,function(value)
 _G.AutoTialRaceSky = value 
