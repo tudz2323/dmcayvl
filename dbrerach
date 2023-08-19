@@ -5567,7 +5567,7 @@ end)
                      for i,v in pairs(game:GetService("Workspace").SeaBeasts:GetChildren()) do
                          if v:FindFirstChild("HumanoidRootPart") then
                             AutoHaki()
-                            EquipWeapon(_G.SelectWeapon)
+                            EquipWeapon(_G.Select_Weapon)
                             topos(v.HumanoidRootPart.CFrame * CFrame.new(5,500,7))
                             game:GetService("VirtualUser"):CaptureController()
                             game:GetService("VirtualUser"):Button1Down(Vector2.new(1280,672))
