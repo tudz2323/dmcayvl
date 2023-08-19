@@ -5184,12 +5184,11 @@ Main:Toggle("Auto Pirate Raid", _G.AutoRaidPirate,function(value)
 							if (v.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude < 2000 then
 								repeat wait()
 									AutoHaki()
-									EquipWeapon(_G.SelectWeapon)
-									FastA()
+									EquipWeapon(_G.Select_Weapon)
 									Fastattack = true
 									v.HumanoidRootPart.CanCollide = false
 									v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
-									topos(v.HumanoidRootPart.CFrame * CFrame.new(PosX,PosY,PosZ))
+									topos(v.HumanoidRootPart.CFrame * MethodFarm)
 								until v.Humanoid.Health <= 0 or not v.Parent or _G.AutoRaidPirate == false
 								Fastattack = false
 							end
@@ -5199,7 +5198,7 @@ Main:Toggle("Auto Pirate Raid", _G.AutoRaidPirate,function(value)
 					if ((CFrameBoss).Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude <= 1500 then
 						topos(CFrameBoss)
 					else
-						TelePBoss(CFrameBoss)
+						topos(CFrameBoss)
 					end
 				end
 			end)
