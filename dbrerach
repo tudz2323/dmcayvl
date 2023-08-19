@@ -4287,13 +4287,13 @@ repeat wait() until game:IsLoaded()
 end)
 
 if not game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").KeyboardEnabled == false then
-_G.DistanceMob = 15
-Setting:Slider("Farm Distance",1,100,20,function(value)
+_G.DistanceMob = 35
+Setting:Slider("Farm Distance",1,100,35,function(value)
  _G.DistanceMob = value
  end)
 else
- _G.DistanceMob = 15
-Setting:Slider1("Farm Distance",1,100,20,function(value)
+ _G.DistanceMob = 35
+Setting:Slider1("Farm Distance",1,100,35,function(value)
  _G.DistanceMob = value
  end)
 end
@@ -4506,7 +4506,7 @@ Setting:Toggle("Fast Attack",true,function(value)
 	_G.FastAttack = value
 end)      
 
-_G.Fast_Delay = 0.3
+_G.Fast_Delay = 0.2
 
 local CurveFrame = debug.getupvalues(require(game:GetService("Players").LocalPlayer.PlayerScripts:WaitForChild("CombatFramework")))[2]
 local VirtualUser = game:GetService("VirtualUser")
