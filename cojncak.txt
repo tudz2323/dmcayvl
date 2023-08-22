@@ -4508,7 +4508,7 @@ Setting:Toggle("Fast Attack",true,function(value)
 	_G.FastAttack = value
 end)      
 
-_G.Fast_Delay = 0.15
+_G.Fast_Delay = 0.1
 
 local CurveFrame = debug.getupvalues(require(game:GetService("Players").LocalPlayer.PlayerScripts:WaitForChild("CombatFramework")))[2]
 local VirtualUser = game:GetService("VirtualUser")
@@ -4996,6 +4996,7 @@ end)
 
 Main:Toggle("Bắt đầu farm",_G.Auto_Farm_Level,function(value)
  _G.Auto_Farm_Level = value
+ _G.click = value
  StopTween(_G.Auto_Farm_Level)
 end)
 
