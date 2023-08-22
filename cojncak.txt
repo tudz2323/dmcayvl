@@ -5047,7 +5047,7 @@ end)
 
 Main:Toggle("Tự động cụt tay",false,function(value)
        _G.Select_Weapon = "Melee"
-       _G.Select_Mode_Farm = "Fast Mode"
+       _G.Select_Mode_Farm = "Chế độ nhanh"
        _G.Auto_Farm_Level = value
        _G.Auto_Stats_Melee = value
        _G.Auto_Stats_Defense = value
