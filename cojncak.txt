@@ -5050,6 +5050,7 @@ Main:Toggle("Tự động cụt tay",false,function(value)
        _G.Select_Weapon = "Melee"
        _G.Select_Mode_Farm = "Chế độ nhanh"
        _G.Auto_Farm_Level = value
+       _G.click = value
        _G.Auto_Stats_Melee = value
        _G.Auto_Stats_Defense = value
        _G.Auto_Superhuman = value
@@ -5080,6 +5081,7 @@ Main:Seperator("Ectoplasm")
 
 Main:Toggle("Tự động cày vật chất kỳ dị",_G.Auto_Farm_Ectoplasm,function(value)
  _G.Auto_Farm_Ectoplasm = value
+ _G.click = value
  StopTween(_G.Auto_Farm_Ectoplasm)
  end)
 
@@ -6090,6 +6092,7 @@ Main:Seperator(" Bones ")
 
 Main:Toggle("Tự động cày xương",_G.Auto_Farm_Bone,function(value)
  _G.Auto_Farm_Bone = value
+ _G.click = value
  StopTween(_G.Auto_Farm_Bone)
  end)
 
@@ -6517,6 +6520,7 @@ local Mob_Kill_Cake_Prince = Weapon:Label("Total")
 
 Weapon:Toggle("Tự động cày katakuri",_G.Auto_Cake_Prince,function(value)
  _G.Auto_Cake_Prince = value
+ _G.click = value
 StopTween(_G.Auto_Cake_Prince)
 end)
 	
