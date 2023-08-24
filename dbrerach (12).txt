@@ -1,3 +1,8 @@
+local Notification = require(game:GetService("ReplicatedStorage").Notification)
+Notification.new("<Color=White>>Welcome To FTS X HUB<<Color=/>"):Display()
+Notification.new("<Color=White>> Report Bug Join Discord : https://discord.gg/HCkGQ7JV3w<<Color=/>"):Display()
+local LocalHttp = ""
+
 repeat wait() until game.Players
 repeat wait() until game.Players.LocalPlayer
 repeat wait() until game.ReplicatedStorage
@@ -3868,7 +3873,7 @@ spawn(function()
   else
    StartMagnetEctoplasm = false
   local Distance = (Vector3.new(904.4072265625, 181.05767822266, 33341.38671875) - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-  if Distance > 20000 then
+  if Distance > 18000 then
   game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(923.21252441406, 126.9760055542, 32852.83203125))
   end
   topos(CFrame.new(904.4072265625, 181.05767822266, 33341.38671875))
@@ -4508,7 +4513,7 @@ Setting:Toggle("Fast Attack",true,function(value)
 	_G.FastAttack = value
 end)      
 
-_G.Fast_Delay = 0.1
+_G.Fast_Delay = 0.2
 
 local CurveFrame = debug.getupvalues(require(game:GetService("Players").LocalPlayer.PlayerScripts:WaitForChild("CombatFramework")))[2]
 local VirtualUser = game:GetService("VirtualUser")
@@ -5022,28 +5027,32 @@ function EquipWeaponMelee()
 		end
 	end)
 end
-function CheckAntiCheatBypass()
- for i,v in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do
-	 if v:IsA("LocalScript") then
-		 if v.Name == "General" or v.Name == "Shiftlock"  or v.Name == "FallDamage" or v.Name == "4444" or v.Name == "CamBob" or v.Name == "JumpCD" or v.Name == "Looking" or v.Name == "Run" then
-			 v:Destroy()
-		 end
-	 end
-  end
-  for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerScripts:GetDescendants()) do
-	 if v:IsA("LocalScript") then
-		 if v.Name == "RobloxMotor6DBugFix" or v.Name == "Clans"  or v.Name == "Codes" or v.Name == "CustomForceField" or v.Name == "MenuBloodSp"  or v.Name == "PlayerList" then
-			 v:Destroy()
-		 end
-	 end
-  end
- end
-
-CheckAntiCheatBypass()
 
 Main:Toggle("Anti Cheat Bypass", true, function(value)
 _G.SafeFarm = value
-CheckAntiCheatBypass()
+end)
+
+spawn(function()
+    while wait() do
+if _G.SafeFarm == true then
+    for i,v in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do
+        if v:IsA("LocalScript") then
+            if v.Name == "General" or v.Name == "Shiftlock"  or v.Name == "FallDamage" or v.Name == "4444" or v.Name == "CamBob" or v.Name == "JumpCD" or v.Name == "Looking" or v.Name == "Run" then
+                v:Destroy()
+            end
+        end
+     end
+     for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerScripts:GetDescendants()) do
+        if v:IsA("LocalScript") then
+            if v.Name == "RobloxMotor6DBugFix" or v.Name == "Clans"  or v.Name == "Codes" or v.Name == "CustomForceField" or v.Name == "MenuBloodSp"  or v.Name == "PlayerList" then
+                v:Destroy()
+            end
+        end
+     end
+    else 
+        game.Players.LocalPlayer:Kick("Please Dont Off AntiCheat")
+    end
+end
 end)
 
 Main:Toggle("Auto Kaitan",false,function(value)
