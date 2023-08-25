@@ -4991,10 +4991,6 @@ function EquipWeaponMelee()
 	end)
 end
 
-Main:Toggle('Bypass Teleport', BypassTP, function(vale)
-BypassTP = vale
-end)
-
 Main:Toggle("Anti Cheat Bypass", true, function(value)
 _G.SafeFarm = value
 end)
