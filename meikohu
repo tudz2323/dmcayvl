@@ -1,0 +1,1204 @@
+
+-- DELTA SAFE UI: AIMBOT + ESP + FLY + NOCLIP (FULL FIX)
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local Camera = workspace.CurrentCamera
+local LP = Players.LocalPlayer
+ game.StarterGui:SetCore("SendNotification", {
+    Title = "Script",
+    Text = "Script loading!",
+    Duration = 3
+}) 
+
+task.wait(3)
+
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Script",
+    Text = "Script loaded",
+    Duration = 3
+}) 
+
+local function getChar()
+    return LP.Character or LP.CharacterAdded:Wait()
+end
+
+local SoundService = game:GetService("SoundService")
+
+local clickSound = Instance.new("Sound")
+clickSound.SoundId = "rbxassetid://110210610071086"
+clickSound.Volume = 1
+clickSound.Parent = SoundService
+
+local function playClick()
+    if clickSound.IsPlaying then
+        clickSound:Stop()
+    end
+    clickSound:Play()
+end
+
+------------------------------------------------
+-- FLY SPEED CONFIG (GLOBAL)
+------------------------------------------------
+FLY_MIN = 20
+FLY_MAX = 150
+FLY_SPEED = 65
+
+------------------------------------------------
+-- SPEED & JUMP CONFIG (GLOBAL)
+------------------------------------------------
+SPEED_MIN = 16
+SPEED_MAX = 150
+SPEED_VALUE = 40
+
+JUMP_MIN = 50
+JUMP_MAX = 300
+JUMP_VALUE = 120
+
+------------------------------------------------
+-- UI MAIN
+------------------------------------------------
+local gui = Instance.new("ScreenGui", LP.PlayerGui)
+gui.ResetOnSpawn = false
+
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.new(0,380,0,360)
+main.Position = UDim2.new(0.35,0,0.3,0)
+main.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Instance.new("UICorner", main).CornerRadius = UDim.new(0,12)
+main.Visible = true
+main.Active = true
+main.ClipsDescendants = false
+Instance.new("UICorner", main).CornerRadius = UDim.new(0,12)
+
+local uiOriginPos = main.Position
+
+------------------------------------------------
+-- RESIZE UI
+------------------------------------------------
+local resizeHandle = Instance.new("Frame", main)
+resizeHandle.Size = UDim2.new(0,18,0,18)
+resizeHandle.Position = UDim2.new(1,-18,1,-18)
+resizeHandle.BackgroundColor3 = Color3.fromRGB(90,90,90)
+resizeHandle.Active = true
+resizeHandle.ZIndex = 10
+Instance.new("UICorner", resizeHandle).CornerRadius = UDim.new(0,6)
+
+local resizing, rsMouse, rsSize = false
+
+resizeHandle.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        resizing = true
+        rsMouse = i.Position
+        rsSize = main.Size
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if resizing and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+        local d = i.Position - rsMouse
+        main.Size = UDim2.new(
+            0, math.clamp(rsSize.X.Offset + d.X, 220, 460),
+           0, math.clamp(rsSize.Y.Offset + d.Y, 260, 700)
+        )
+    end
+end)
+
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        resizing = false
+    end
+end)
+
+------------------------------------------------
+-- TOP BAR
+------------------------------------------------
+local top = Instance.new("Frame", main)
+top.Size = UDim2.new(1,0,0,35)
+top.BackgroundColor3 = Color3.fromRGB(45,45,45)
+Instance.new("UICorner", top)
+
+local title = Instance.new("TextLabel", top)
+title.Size = UDim2.new(1,-40,1,0)
+title.Position = UDim2.new(0,10,0,0)
+title.BackgroundTransparency = 1
+title.Text = "Meiko Script"
+title.TextColor3 = Color3.new(1,1,1)
+title.TextScaled = true
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+local close = Instance.new("TextButton", top)
+close.Size = UDim2.new(0,30,0,30)
+close.Position = UDim2.new(1,-35,0,3)
+close.Text = "X"
+close.TextScaled = true
+close.BackgroundColor3 = Color3.fromRGB(200,60,60)
+Instance.new("UICorner", close)
+
+------------------------------------------------
+-- DRAG MAIN UI
+------------------------------------------------
+local dragging, dStart, dPos = false
+
+top.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dStart = i.Position
+        dPos = main.Position
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+        local d = i.Position - dStart
+        main.Position = UDim2.new(dPos.X.Scale, dPos.X.Offset + d.X, dPos.Y.Scale, dPos.Y.Offset + d.Y)
+        uiOriginPos = main.Position
+    end
+end)
+
+UIS.InputEnded:Connect(function()
+    dragging = false
+end)
+
+------------------------------------------------
+-- OPEN ICON
+------------------------------------------------
+local openBtn = Instance.new("ImageButton", gui)
+openBtn.Size = UDim2.new(0,45,0,45)
+openBtn.Position = UDim2.new(0.02,0,0.5,0)
+openBtn.BackgroundColor3 = Color3.fromRGB(0,170,255)
+openBtn.Image = "rbxassetid://140341024274277"
+openBtn.ScaleType = Enum.ScaleType.Fit
+openBtn.Visible = false
+openBtn.Active = true
+Instance.new("UICorner", openBtn).CornerRadius = UDim.new(1,0)
+
+------------------------------------------------
+-- DRAG ICON
+------------------------------------------------
+local ibDrag, ibStart, ibPos = false
+
+openBtn.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        ibDrag = true
+        ibStart = i.Position
+        ibPos = openBtn.Position
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if ibDrag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+        local d = i.Position - ibStart
+        openBtn.Position = UDim2.new(ibPos.X.Scale, ibPos.X.Offset + d.X, ibPos.Y.Scale, ibPos.Y.Offset + d.Y)
+    end
+end)
+
+UIS.InputEnded:Connect(function()
+    ibDrag = false
+end)
+
+------------------------------------------------
+-- ROTATE ICON (0.6s)
+------------------------------------------------
+local rotating = false
+local function rotateIcon()
+    if rotating then return end
+    rotating = true
+    openBtn.Rotation = 0
+
+    local t = TweenService:Create(
+        openBtn,
+        TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Rotation = 360}
+    )
+    t:Play()
+    t.Completed:Connect(function()
+        openBtn.Rotation = 0
+        rotating = false
+    end)
+end
+
+------------------------------------------------
+-- UI ANIMATION
+------------------------------------------------
+local function openUI()
+    main.Visible = true
+    main.BackgroundTransparency = 1
+    main.Position = UDim2.new(uiOriginPos.X.Scale, uiOriginPos.X.Offset, uiOriginPos.Y.Scale, uiOriginPos.Y.Offset + 40)
+
+    TweenService:Create(main, TweenInfo.new(0.35), {
+        Position = uiOriginPos,
+        BackgroundTransparency = 0
+    }):Play()
+end
+
+local function closeUI()
+    local t = TweenService:Create(main, TweenInfo.new(0.25), {
+        Position = UDim2.new(uiOriginPos.X.Scale, uiOriginPos.X.Offset, uiOriginPos.Y.Scale, uiOriginPos.Y.Offset + 40),
+        BackgroundTransparency = 1
+    })
+    t:Play()
+    t.Completed:Connect(function()
+        main.Visible = false
+    end)
+end
+
+------------------------------------------------
+-- OPEN / CLOSE
+------------------------------------------------
+openBtn.Activated:Connect(function()
+    rotateIcon()
+    task.wait(0.25)
+    openUI()
+    openBtn.Visible = false
+end)
+
+close.Activated:Connect(function()
+    closeUI()
+    task.wait(0.25)
+    openBtn.Visible = true
+end)
+
+------------------------------------------------
+-- BUTTONS
+------------------------------------------------
+local function makeBtn(text, y)
+    local b = Instance.new("TextButton", main)
+    b.Size = UDim2.new(0.85,0,0,36)
+    b.Position = UDim2.new(0.075,0,y,0)
+    b.Text = text.." : OFF"
+    b.TextScaled = true
+    b.BackgroundColor3 = Color3.fromRGB(0,170,255)
+    Instance.new("UICorner", b)
+    return b
+end
+
+local sliderTitle = Instance.new("TextLabel", sliderFrame)
+sliderTitle.Size = UDim2.new(0.3,0,1,0)
+sliderTitle.BackgroundTransparency = 1
+sliderTitle.Text = "FLY SPD"
+sliderTitle.TextColor3 = Color3.new(1,1,1)
+sliderTitle.TextScaled = true
+
+local sliderBar = Instance.new("Frame", sliderFrame)
+sliderBar.Position = UDim2.new(0.32,0,0.5,-4)
+sliderBar.Size = UDim2.new(0.55,0,0,8)
+sliderBar.BackgroundColor3 = Color3.fromRGB(70,70,70)
+Instance.new("UICorner", sliderBar)
+
+local sliderFill = Instance.new("Frame", sliderBar)
+sliderFill.Size = UDim2.new((FLY_SPEED-FLY_MIN)/(FLY_MAX-FLY_MIN),0,1,0)
+sliderFill.BackgroundColor3 = Color3.fromRGB(0,170,255)
+Instance.new("UICorner", sliderFill)
+
+local sliderKnob = Instance.new("Frame", sliderBar)
+sliderKnob.Size = UDim2.new(0,18,0,18)
+sliderKnob.Position = UDim2.new(sliderFill.Size.X.Scale,-9,0.5,-9)
+sliderKnob.BackgroundColor3 = Color3.fromRGB(220,220,220)
+sliderKnob.Active = true
+sliderKnob.ZIndex = 5
+Instance.new("UICorner", sliderKnob).CornerRadius = UDim.new(1,0)
+
+local sliderValue = Instance.new("TextLabel", sliderFrame)
+sliderValue.Size = UDim2.new(0.12,0,1,0)
+sliderValue.Position = UDim2.new(0.88,0,0,0)
+sliderValue.BackgroundTransparency = 1
+sliderValue.Text = tostring(FLY_SPEED)
+sliderValue.TextColor3 = Color3.new(1,1,1)
+sliderValue.TextScaled = true
+
+------------------------------------------------
+-- SLIDER LOGIC
+------------------------------------------------
+local draggingSlider = false
+
+local function updateFlySpeed(xPos)
+    local rel = math.clamp(
+        (xPos - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X,
+        0, 1
+    )
+
+    sliderFill.Size = UDim2.new(rel,0,1,0)
+    sliderKnob.Position = UDim2.new(rel,-9,0.5,-9)
+
+    FLY_SPEED = math.floor(FLY_MIN + (FLY_MAX - FLY_MIN) * rel)
+    sliderValue.Text = tostring(FLY_SPEED)
+end
+
+sliderKnob.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1
+    or i.UserInputType == Enum.UserInputType.Touch then
+        draggingSlider = true
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if draggingSlider and
+    (i.UserInputType == Enum.UserInputType.MouseMovement
+    or i.UserInputType == Enum.UserInputType.Touch) then
+        updateFlySpeed(i.Position.X)
+    end
+end)
+
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1
+    or i.UserInputType == Enum.UserInputType.Touch then
+        draggingSlider = false
+    end
+end)
+
+local function makeSideAdjust(y, value)
+    local minus = Instance.new("TextButton", main)
+    minus.Size = UDim2.new(0,26,0,26)
+    minus.Position = UDim2.new(1,-96,y,5)
+    minus.Text = "-"
+    minus.TextScaled = true
+    minus.BackgroundColor3 = Color3.fromRGB(200,80,80)
+    Instance.new("UICorner", minus)
+
+    local label = Instance.new("TextLabel", main)
+    label.Size = UDim2.new(0,36,0,26)
+    label.Position = UDim2.new(1,-68,y,5)
+    label.BackgroundColor3 = Color3.fromRGB(40,40,40)
+    label.TextColor3 = Color3.new(1,1,1)
+    label.TextScaled = true
+    label.Text = tostring(value)
+    Instance.new("UICorner", label)
+
+    local plus = Instance.new("TextButton", main)
+    plus.Size = UDim2.new(0,26,0,26)
+    plus.Position = UDim2.new(1,-32,y,5)
+    plus.Text = "+"
+    plus.TextScaled = true
+    plus.BackgroundColor3 = Color3.fromRGB(80,200,80)
+    Instance.new("UICorner", plus)
+
+    return minus, label, plus
+end
+
+local aimBtn = makeBtn("AIMBOT", 0.10)
+local hitboxBtn = makeBtn("HITBOX", 0.20)
+local espBtn = makeBtn("ESP BOX", 0.30)
+local flyBtn = makeBtn("FLY", 0.40)
+local noclipBtn = makeBtn("NOCLIP", 0.50)
+local tpBtn = makeBtn("TP TOOL", 0.60)
+local speedBtn   = makeBtn("SPEED", 0.70)
+
+local speedMinus, speedLabel, speedPlus = makeSideAdjust(1.70, SPEED_VALUE)
+
+speedMinus.Activated:Connect(function()
+    SPEED_VALUE = math.max(16, SPEED_VALUE - 5)
+    speedLabel.Text = SPEED_VALUE
+    if speedOn then
+        getChar():FindFirstChildOfClass("Humanoid").WalkSpeed = SPEED_VALUE
+    end
+end)
+
+speedPlus.Activated:Connect(function()
+    SPEED_VALUE = math.min(150, SPEED_VALUE + 5)
+    speedLabel.Text = SPEED_VALUE
+    if speedOn then
+        getChar():FindFirstChildOfClass("Humanoid").WalkSpeed = SPEED_VALUE
+    end
+end)
+
+local jumpBtn    = makeBtn("HIGH JUMP", 0.80)
+
+local jumpMinus, jumpLabel, jumpPlus = makeSideAdjust(1.80, JUMP_VALUE)
+
+jumpMinus.Activated:Connect(function()
+    JUMP_VALUE = math.max(50, JUMP_VALUE - 10)
+    jumpLabel.Text = JUMP_VALUE
+    if jumpOn then
+        getChar():FindFirstChildOfClass("Humanoid").JumpPower = JUMP_VALUE
+    end
+end)
+
+jumpPlus.Activated:Connect(function()
+    JUMP_VALUE = math.min(300, JUMP_VALUE + 10)
+    jumpLabel.Text = JUMP_VALUE
+    if jumpOn then
+        getChar():FindFirstChildOfClass("Humanoid").JumpPower = JUMP_VALUE
+    end
+end)
+
+------------------------------------------------
+-- AIMBOT CONFIG
+------------------------------------------------
+local AIM_FOV = 70          -- bán kính aim (pixel)
+local AIM_SMOOTH = 0.2     -- 0.05 = rất mượt | 0.2 = nhanh
+local AIM_PART = "Head"     -- Head / HumanoidRootPart
+
+local function getClosestTarget()
+    local closest
+    local shortest = AIM_FOV
+    local center = Vector2.new(
+        Camera.ViewportSize.X / 2,
+        Camera.ViewportSize.Y / 2
+    )
+
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LP and p.Character and p.Character:FindFirstChild(AIM_PART) then
+            local hum = p.Character:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health > 0 then
+                local pos, onScreen = Camera:WorldToViewportPoint(
+                    p.Character[AIM_PART].Position
+                )
+
+                if onScreen then
+                    local dist = (Vector2.new(pos.X, pos.Y) - center).Magnitude
+                    if dist < shortest then
+                        shortest = dist
+                        closest = p.Character[AIM_PART]
+                    end
+                end
+            end
+        end
+    end
+    return closest
+end
+
+local aimbotOn = false
+
+------------------------------------------------
+-- FOV CIRCLE CONFIG
+------------------------------------------------
+local SHOW_FOV = true
+local FOV_COLOR = Color3.fromRGB(0, 255, 0)
+local FOV_THICKNESS = 2
+local FOV_TRANSPARENCY = 1
+
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Visible = false
+FOVCircle.Radius = AIM_FOV
+FOVCircle.Color = FOV_COLOR
+FOVCircle.Thickness = FOV_THICKNESS
+FOVCircle.Transparency = FOV_TRANSPARENCY
+FOVCircle.Filled = false
+
+RunService.RenderStepped:Connect(function()
+    if not aimbotOn then
+        FOVCircle.Visible = false
+        return
+    end
+
+    FOVCircle.Position = Vector2.new(
+        Camera.ViewportSize.X / 2,
+        Camera.ViewportSize.Y / 2
+    )
+
+    FOVCircle.Radius = AIM_FOV
+    FOVCircle.Visible = true
+end)
+
+------------------------------------------------
+-- AIMBOT
+------------------------------------------------
+
+RunService.RenderStepped:Connect(function()
+    if not aimbotOn then return end
+
+    local target = getClosestTarget()
+    if target then
+        local camCF = Camera.CFrame
+        local aimCF = CFrame.new(camCF.Position, target.Position)
+        Camera.CFrame = camCF:Lerp(aimCF, AIM_SMOOTH)
+    end
+end)
+
+aimBtn.Activated:Connect(function()
+playClick()
+    aimbotOn = not aimbotOn
+    aimBtn.Text = aimbotOn and "AIMBOT : ON" or "AIMBOT : OFF"
+end)
+
+------------------------------------------------
+-- ADVANCED ESP (BOX + NAME + HP + DIST + TEAM)
+------------------------------------------------
+local espOn = false
+local ESP_CACHE = {}
+
+local ESP_CONFIG = {
+    BoxColorEnemy = Color3.fromRGB(255, 70, 70),
+    BoxColorTeam  = Color3.fromRGB(70, 170, 255),
+    TextSize = 13,
+    MaxDistance = 2000, -- studs
+    TeamCheck = true
+}
+
+local function removeESP(plr)
+    if ESP_CACHE[plr] then
+        for _,v in pairs(ESP_CACHE[plr]) do
+            v:Remove()
+        end
+        ESP_CACHE[plr] = nil
+    end
+end
+
+RunService.RenderStepped:Connect(function()
+    if not espOn then
+        for p in pairs(ESP_CACHE) do
+            removeESP(p)
+        end
+        return
+    end
+
+    for _,plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LP and plr.Character then
+            local char = plr.Character
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            local hum = char:FindFirstChildOfClass("Humanoid")
+
+            if hrp and hum and hum.Health > 0 then
+                local pos, onScreen = Camera:WorldToViewportPoint(hrp.Position)
+                local dist = (Camera.CFrame.Position - hrp.Position).Magnitude
+
+                if onScreen and dist <= ESP_CONFIG.MaxDistance then
+                    if ESP_CONFIG.TeamCheck and plr.Team == LP.Team then
+                        -- vẫn vẽ nhưng đổi màu
+                    end
+
+                    if not ESP_CACHE[plr] then
+                        ESP_CACHE[plr] = {
+                            Box = Drawing.new("Square"),
+                            Name = Drawing.new("Text"),
+                            Health = Drawing.new("Text"),
+                            Distance = Drawing.new("Text")
+                        }
+
+                        ESP_CACHE[plr].Box.Thickness = 1.5
+                        ESP_CACHE[plr].Box.Filled = false
+
+                        for _,t in pairs({ESP_CACHE[plr].Name, ESP_CACHE[plr].Health, ESP_CACHE[plr].Distance}) do
+                            t.Center = true
+                            t.Outline = true
+                            t.Size = ESP_CONFIG.TextSize
+                        end
+                    end
+
+                    local scale = math.clamp(1 / (dist / 600), 0.8, 2)
+                    local w, h = 40 * scale, 60 * scale
+
+                    local color = (ESP_CONFIG.TeamCheck and plr.Team == LP.Team)
+                        and ESP_CONFIG.BoxColorTeam
+                        or ESP_CONFIG.BoxColorEnemy
+
+                    local box = ESP_CACHE[plr].Box
+                    box.Size = Vector2.new(w, h)
+                    box.Position = Vector2.new(pos.X - w/2, pos.Y - h/2)
+                    box.Color = color
+                    box.Visible = true
+
+                    ESP_CACHE[plr].Name.Text = plr.Name
+                    ESP_CACHE[plr].Name.Position = Vector2.new(pos.X, pos.Y - h/2 - 14)
+                    ESP_CACHE[plr].Name.Color = color
+                    ESP_CACHE[plr].Name.Visible = true
+
+                    local hpPercent = math.floor((hum.Health / hum.MaxHealth) * 100)
+                    ESP_CACHE[plr].Health.Text = hpPercent .. "%"
+                    ESP_CACHE[plr].Health.Position = Vector2.new(pos.X, pos.Y + h/2 + 2)
+                    ESP_CACHE[plr].Health.Color = Color3.fromRGB(0,255,0)
+                    ESP_CACHE[plr].Health.Visible = true
+
+                    ESP_CACHE[plr].Distance.Text = math.floor(dist) .. "m"
+                    ESP_CACHE[plr].Distance.Position = Vector2.new(pos.X, pos.Y + h/2 + 14)
+                    ESP_CACHE[plr].Distance.Color = Color3.fromRGB(255,255,255)
+                    ESP_CACHE[plr].Distance.Visible = true
+                else
+                    removeESP(plr)
+                end
+            else
+                removeESP(plr)
+            end
+        end
+    end
+end)
+
+Players.PlayerRemoving:Connect(removeESP)
+
+espBtn.Activated:Connect(function()
+playClick()
+    espOn = not espOn
+    espBtn.Text = espOn and "ESP BOX : ON" or "ESP BOX : OFF"
+    if not espOn then
+        for _,b in pairs(ESPs) do b:Destroy() end
+        ESPs = {}
+    end
+end)
+
+------------------------------------------------
+-- FLY (JOYSTICK ONLY - MOBILE FIXED)
+------------------------------------------------
+local flyOn = false
+local flyConn
+local bv, bg
+
+local function startFly()
+    local char = getChar()
+    local hrp = char:WaitForChild("HumanoidRootPart")
+    local hum = char:WaitForChild("Humanoid")
+
+    hum.PlatformStand = true
+
+    bv = Instance.new("BodyVelocity")
+    bv.MaxForce = Vector3.new(9e9,9e9,9e9)
+    bv.Velocity = Vector3.zero
+    bv.Parent = hrp
+
+    bg = Instance.new("BodyGyro")
+    bg.MaxTorque = Vector3.new(9e9,9e9,9e9)
+    bg.P = 1e5
+    bg.Parent = hrp
+
+    flyConn = RunService.RenderStepped:Connect(function()
+        if not flyOn then return end
+
+        local moveDir = hum.MoveDirection
+        if moveDir.Magnitude > 0 then
+            local dir = Camera.CFrame.LookVector
+            bv.Velocity = dir.Unit * FLY_SPEED
+        else
+            bv.Velocity = Vector3.zero
+        end
+
+        bg.CFrame = Camera.CFrame
+    end)
+end
+
+local function stopFly()
+    if flyConn then flyConn:Disconnect() end
+    flyConn = nil
+
+    local hum = getChar():FindFirstChild("Humanoid")
+    if hum then hum.PlatformStand = false end
+
+    if bv then bv:Destroy() end
+    if bg then bg:Destroy() end
+end
+
+flyBtn.Activated:Connect(function()
+    flyOn = not flyOn
+    flyBtn.Text = flyOn and ("FLY : ON ("..FLY_SPEED..")") or "FLY : OFF"
+
+    if flyOn then
+        startFly()
+    else
+        stopFly()
+    end
+end)
+
+------------------------------------------------
+-- FLY SPEED SLIDER (FIXED)
+------------------------------------------------
+local sliderFrame = Instance.new("Frame", main)
+sliderFrame.Size = UDim2.new(0.85,0,0,36)
+sliderFrame.Position = UDim2.new(1.025, 0, 0.40, 0)
+sliderFrame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Instance.new("UICorner", sliderFrame)
+
+local sliderBar = Instance.new("Frame", sliderFrame)
+sliderBar.Position = UDim2.new(0.05,0,0.5,-4)
+sliderBar.Size = UDim2.new(0.75,0,0,8)
+sliderBar.BackgroundColor3 = Color3.fromRGB(80,80,80)
+Instance.new("UICorner", sliderBar)
+
+local sliderFill = Instance.new("Frame", sliderBar)
+sliderFill.Size = UDim2.new((FLY_SPEED-FLY_MIN)/(FLY_MAX-FLY_MIN),0,1,0)
+sliderFill.BackgroundColor3 = Color3.fromRGB(0,170,255)
+Instance.new("UICorner", sliderFill)
+
+local knob = Instance.new("Frame", sliderBar)
+knob.Size = UDim2.new(0,16,0,16)
+knob.Position = UDim2.new(sliderFill.Size.X.Scale,-8,0.5,-8)
+knob.BackgroundColor3 = Color3.fromRGB(230,230,230)
+knob.Active = true
+Instance.new("UICorner", knob).CornerRadius = UDim.new(1,0)
+
+local valueLabel = Instance.new("TextLabel", sliderFrame)
+valueLabel.Size = UDim2.new(0.15,0,1,0)
+valueLabel.Position = UDim2.new(0.82,0,0,0)
+valueLabel.BackgroundTransparency = 1
+valueLabel.TextColor3 = Color3.new(1,1,1)
+valueLabel.TextScaled = true
+valueLabel.Text = tostring(FLY_SPEED)
+
+local dragging = false
+
+local function update(x)
+    local r = math.clamp(
+        (x - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X,
+        0, 1
+    )
+
+    sliderFill.Size = UDim2.new(r,0,1,0)
+    knob.Position = UDim2.new(r,-8,0.5,-8)
+
+    FLY_SPEED = math.floor(FLY_MIN + (FLY_MAX-FLY_MIN)*r)
+    valueLabel.Text = tostring(FLY_SPEED)
+
+    if flyOn then
+        flyBtn.Text = "FLY : ON ("..FLY_SPEED..")"
+    end
+end
+
+knob.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if dragging and (i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseMovement) then
+        update(i.Position.X)
+    end
+end)
+
+UIS.InputEnded:Connect(function()
+    dragging = false
+end)
+
+------------------------------------------------
+-- NOCLIP
+------------------------------------------------
+local noclipOn = false
+
+RunService.Stepped:Connect(function()
+    if noclipOn and LP.Character then
+        for _,p in pairs(LP.Character:GetDescendants()) do
+            if p:IsA("BasePart") then
+                p.CanCollide = false
+            end
+        end
+    end
+end)
+
+noclipBtn.Activated:Connect(function()
+    noclipOn = not noclipOn
+    noclipBtn.Text = noclipOn and "NOCLIP : ON" or "NOCLIP : OFF"
+end)
+
+------------------------------------------------
+-- HITBOX
+------------------------------------------------
+
+local hitboxOn = false
+local HITBOX_MIN = 5
+local HITBOX_MAX = 30
+local HITBOX_SIZE = 10
+local originalSize = {}
+
+RunService.RenderStepped:Connect(function()
+    if not hitboxOn then return end
+
+    for _,p in pairs(Players:GetPlayers()) do
+        if p ~= LP and p.Character then
+            local hrp = p.Character:FindFirstChild("HumanoidRootPart")
+            local hum = p.Character:FindFirstChild("Humanoid")
+            if hrp and hum and hum.Health > 0 then
+
+                if not originalSize[p] then
+                    originalSize[p] = hrp.Size
+                end
+
+                hrp.Size = Vector3.new(HITBOX_SIZE, HITBOX_SIZE, HITBOX_SIZE)
+                hrp.Transparency = 0.6
+                hrp.Material = Enum.Material.Neon
+                hrp.BrickColor = BrickColor.new("Really blue")
+                hrp.CanCollide = false
+            end
+        end
+    end
+end)
+
+local function toggleHitbox(state)
+    hitboxOn = state
+    hitboxBtn.Text = hitboxOn and "HITBOX : ON" or "HITBOX : OFF"
+
+    if not hitboxOn then
+        for p,size in pairs(originalSize) do
+            if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local hrp = p.Character.HumanoidRootPart
+                hrp.Size = size
+                hrp.Transparency = 1
+                hrp.Material = Enum.Material.Plastic
+                hrp.CanCollide = true
+            end
+        end
+        originalSize = {}
+    end
+end
+
+hitboxBtn.Activated:Connect(function()
+    toggleHitbox(not hitboxOn)
+end)
+
+------------------------------------------------
+-- HITBOX SLIDER
+------------------------------------------------
+local hitboxSlider = Instance.new("Frame", main)
+hitboxSlider.Size = UDim2.new(0.85,0,0,36)
+hitboxSlider.Position = UDim2.new(1.025,0,0.20,0)
+hitboxSlider.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Instance.new("UICorner", hitboxSlider)
+
+local hitboxBar = Instance.new("Frame", hitboxSlider)
+hitboxBar.Position = UDim2.new(0.05,0,0.5,-4)
+hitboxBar.Size = UDim2.new(0.75,0,0,8)
+hitboxBar.BackgroundColor3 = Color3.fromRGB(80,80,80)
+Instance.new("UICorner", hitboxBar)
+
+local hitboxFill = Instance.new("Frame", hitboxBar)
+hitboxFill.BackgroundColor3 = Color3.fromRGB(0,170,255)
+Instance.new("UICorner", hitboxFill)
+
+local hitboxKnob = Instance.new("Frame", hitboxBar)
+hitboxKnob.Size = UDim2.new(0,16,0,16)
+hitboxKnob.BackgroundColor3 = Color3.fromRGB(230,230,230)
+hitboxKnob.Active = true
+Instance.new("UICorner", hitboxKnob).CornerRadius = UDim.new(1,0)
+
+local hitboxVal = Instance.new("TextLabel", hitboxSlider)
+hitboxVal.Size = UDim2.new(0.15,0,1,0)
+hitboxVal.Position = UDim2.new(0.82,0,0,0)
+hitboxVal.BackgroundTransparency = 1
+hitboxVal.TextColor3 = Color3.new(1,1,1)
+hitboxVal.TextScaled = true
+hitboxVal.Text = tostring(HITBOX_SIZE)
+
+-- init fill
+local initR = (HITBOX_SIZE - HITBOX_MIN) / (HITBOX_MAX - HITBOX_MIN)
+hitboxFill.Size = UDim2.new(initR,0,1,0)
+hitboxKnob.Position = UDim2.new(initR,-8,0.5,-8)
+
+local draggingHitbox = false
+
+local function updateHitbox(x)
+    local r = math.clamp(
+        (x - hitboxBar.AbsolutePosition.X) / hitboxBar.AbsoluteSize.X,
+        0, 1
+    )
+
+    hitboxFill.Size = UDim2.new(r,0,1,0)
+    hitboxKnob.Position = UDim2.new(r,-8,0.5,-8)
+
+    HITBOX_SIZE = math.floor(HITBOX_MIN + (HITBOX_MAX - HITBOX_MIN) * r)
+    hitboxVal.Text = HITBOX_SIZE
+end
+
+hitboxKnob.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        draggingHitbox = true
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if draggingHitbox and
+    (i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseMovement) then
+        updateHitbox(i.Position.X)
+    end
+end)
+
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        draggingHitbox = false
+    end
+end)
+
+------------------------------------------------
+-- TP TOOL (UI + PC + MOBILE)
+------------------------------------------------
+local tpOn = false
+local mouse = LP:GetMouse()
+
+tpBtn.Activated:Connect(function()
+    tpOn = not tpOn
+    tpBtn.Text = tpOn and "TP TOOL : ON" or "TP TOOL : OFF"
+end)
+
+-- PC click
+mouse.Button1Down:Connect(function()
+    if not tpOn then return end
+    local char = getChar()
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if hrp and mouse.Hit then
+        hrp.CFrame = CFrame.new(mouse.Hit.Position + Vector3.new(0,3,0))
+    end
+end)
+
+-- MOBILE tap
+UIS.TouchTap:Connect(function(pos, gpe)
+    if gpe or not tpOn then return end
+    local char = getChar()
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        hrp.CFrame = CFrame.new(pos[1] + Vector3.new(0,3,0))
+    end
+end)
+
+------------------------------------------------
+-- SPEED
+------------------------------------------------
+local speedOn = false
+local DEFAULT_SPEED = 16
+local SPEED_VALUE = 40
+
+speedBtn.Activated:Connect(function()
+    speedOn = not speedOn
+    speedBtn.Text = speedOn and "SPEED : ON" or "SPEED : OFF"
+
+    local char = getChar()
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum.WalkSpeed = speedOn and SPEED_VALUE or DEFAULT_SPEED
+    end
+end)
+
+-- Giữ speed khi respawn
+LP.CharacterAdded:Connect(function(char)
+    local hum = char:WaitForChild("Humanoid")
+    hum.WalkSpeed = speedOn and SPEED_VALUE or DEFAULT_SPEED
+end)
+
+------------------------------------------------
+-- SPEED SLIDER
+------------------------------------------------
+local speedSlider = Instance.new("Frame", main)
+speedSlider.Size = UDim2.new(0.85,0,0,36)
+speedSlider.Position = UDim2.new(1.025,0,0.70,0)
+speedSlider.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Instance.new("UICorner", speedSlider)
+
+local speedBar = Instance.new("Frame", speedSlider)
+speedBar.Position = UDim2.new(0.05,0,0.5,-4)
+speedBar.Size = UDim2.new(0.75,0,0,8)
+speedBar.BackgroundColor3 = Color3.fromRGB(80,80,80)
+Instance.new("UICorner", speedBar)
+
+local speedFill = Instance.new("Frame", speedBar)
+speedFill.BackgroundColor3 = Color3.fromRGB(0,170,255)
+Instance.new("UICorner", speedFill)
+
+local speedKnob = Instance.new("Frame", speedBar)
+speedKnob.Size = UDim2.new(0,16,0,16)
+speedKnob.BackgroundColor3 = Color3.fromRGB(230,230,230)
+speedKnob.Active = true
+Instance.new("UICorner", speedKnob).CornerRadius = UDim.new(1,0)
+
+local speedVal = Instance.new("TextLabel", speedSlider)
+speedVal.Size = UDim2.new(0.15,0,1,0)
+speedVal.Position = UDim2.new(0.82,0,0,0)
+speedVal.BackgroundTransparency = 1
+speedVal.TextColor3 = Color3.new(1,1,1)
+speedVal.TextScaled = true
+
+local function updateSpeed(x)
+	local r = math.clamp(
+		(x - speedBar.AbsolutePosition.X) / speedBar.AbsoluteSize.X,
+		0, 1
+	)
+
+	speedFill.Size = UDim2.new(r,0,1,0)
+	speedKnob.Position = UDim2.new(r,-8,0.5,-8)
+
+	SPEED_VALUE = math.floor(SPEED_MIN + (SPEED_MAX - SPEED_MIN) * r)
+	speedVal.Text = SPEED_VALUE
+
+	if speedOn then
+		getChar():FindFirstChildOfClass("Humanoid").WalkSpeed = SPEED_VALUE
+	end
+end
+
+speedKnob.InputBegan:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.Touch
+	or i.UserInputType == Enum.UserInputType.MouseButton1 then
+		updateSpeed(i.Position.X)
+	end
+end)
+
+local draggingSpeed = false
+
+speedKnob.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        draggingSpeed = true
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if draggingSpeed and
+    (i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseMovement) then
+        updateSpeed(i.Position.X)
+    end
+end)
+
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        draggingSpeed = false
+    end
+end)
+
+------------------------------------------------
+-- HIGH JUMP
+------------------------------------------------
+local jumpOn = false
+local DEFAULT_JUMP = 50
+local JUMP_VALUE = 120
+
+jumpBtn.Activated:Connect(function()
+    jumpOn = not jumpOn
+    jumpBtn.Text = jumpOn and "HIGH JUMP : ON" or "HIGH JUMP : OFF"
+
+    local char = getChar()
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum.UseJumpPower = true
+        hum.JumpPower = jumpOn and JUMP_VALUE or DEFAULT_JUMP
+    end
+end)
+
+-- Giữ jump khi respawn
+LP.CharacterAdded:Connect(function(char)
+    local hum = char:WaitForChild("Humanoid")
+    hum.UseJumpPower = true
+    hum.JumpPower = jumpOn and JUMP_VALUE or DEFAULT_JUMP
+end)
+
+------------------------------------------------
+-- JUMP SLIDER
+------------------------------------------------
+local jumpSlider = Instance.new("Frame", main)
+jumpSlider.Size = UDim2.new(0.85,0,0,36)
+jumpSlider.Position = UDim2.new(1.025,0,0.80,0)
+jumpSlider.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Instance.new("UICorner", jumpSlider)
+
+local jumpBar = Instance.new("Frame", jumpSlider)
+jumpBar.Position = UDim2.new(0.05,0,0.5,-4)
+jumpBar.Size = UDim2.new(0.75,0,0,8)
+jumpBar.BackgroundColor3 = Color3.fromRGB(80,80,80)
+Instance.new("UICorner", jumpBar)
+
+local jumpFill = Instance.new("Frame", jumpBar)
+jumpFill.BackgroundColor3 = Color3.fromRGB(0,170,255)
+Instance.new("UICorner", jumpFill)
+
+local jumpKnob = Instance.new("Frame", jumpBar)
+jumpKnob.Size = UDim2.new(0,16,0,16)
+jumpKnob.BackgroundColor3 = Color3.fromRGB(230,230,230)
+jumpKnob.Active = true
+Instance.new("UICorner", jumpKnob).CornerRadius = UDim.new(1,0)
+
+local jumpVal = Instance.new("TextLabel", jumpSlider)
+jumpVal.Size = UDim2.new(0.15,0,1,0)
+jumpVal.Position = UDim2.new(0.82,0,0,0)
+jumpVal.BackgroundTransparency = 1
+jumpVal.TextColor3 = Color3.new(1,1,1)
+jumpVal.TextScaled = true
+
+local function updateJump(x)
+	local r = math.clamp(
+		(x - jumpBar.AbsolutePosition.X) / jumpBar.AbsoluteSize.X,
+		0, 1
+	)
+
+	jumpFill.Size = UDim2.new(r,0,1,0)
+	jumpKnob.Position = UDim2.new(r,-8,0.5,-8)
+
+	JUMP_VALUE = math.floor(JUMP_MIN + (JUMP_MAX - JUMP_MIN) * r)
+	jumpVal.Text = JUMP_VALUE
+
+	if jumpOn then
+		local hum = getChar():FindFirstChildOfClass("Humanoid")
+		if hum then hum.JumpPower = JUMP_VALUE end
+	end
+end
+
+jumpKnob.InputBegan:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.Touch
+	or i.UserInputType == Enum.UserInputType.MouseButton1 then
+		updateJump(i.Position.X)
+	end
+end)
+
+local draggingJump = false
+
+jumpKnob.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        draggingJump = true
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if draggingJump and
+    (i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseMovement) then
+        updateJump(i.Position.X)
+    end
+end)
+
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        draggingJump = false
+    end
+end)
+
+------------------------------------------------
+-- MUSIC PLAYER (TEXTBOX INPUT)
+------------------------------------------------
+local musicFrame = Instance.new("Frame", main)
+musicFrame.Size = UDim2.new(0.85,0,0,36)
+musicFrame.Position = UDim2.new(0.075,0,0.90,0) -- chỉnh lên xuống ở đây
+musicFrame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Instance.new("UICorner", musicFrame)
+
+local musicBox = Instance.new("TextBox", musicFrame)
+musicBox.Size = UDim2.new(1,-10,1,-8)
+musicBox.Position = UDim2.new(0,5,0,4)
+musicBox.PlaceholderText = "Nhập Audio ID rồi bấm Enter"
+musicBox.Text = ""
+musicBox.ClearTextOnFocus = false
+musicBox.TextColor3 = Color3.new(1,1,1)
+musicBox.TextScaled = true
+musicBox.BackgroundColor3 = Color3.fromRGB(30,30,30)
+musicBox.BorderSizePixel = 0
+Instance.new("UICorner", musicBox)
+
+-- SOUND
+local musicSound = Instance.new("Sound")
+musicSound.Volume = 1
+musicSound.Looped = true
+musicSound.Parent = SoundService
+
+-- NHẬP ID → PHÁT NHẠC
+musicBox.FocusLost:Connect(function(enter)
+    if not enter then return end
+
+    local id = tonumber(musicBox.Text)
+    if not id then
+        musicBox.Text = "ID không hợp lệ!"
+        task.wait(1)
+        musicBox.Text = ""
+        return
+    end
+
+    musicSound:Stop()
+    musicSound.SoundId = "rbxassetid://" .. id
+    musicSound:Play()
+
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Music",
+        Text = "Playing music: "..id,
+        Duration = 2
+    })
+end)
